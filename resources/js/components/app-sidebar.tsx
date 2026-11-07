@@ -1,65 +1,178 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
-import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
+import {
+    Bell,
+    CalendarDays,
+    ChartNoAxesCombined,
+    CreditCard,
+    FileText,
+    Folder,
+    FormInput,
+    HelpCircle,
+    KanbanSquare,
+    LayoutGrid,
+    Mail,
+    MessageSquare,
+    Package,
+    Settings,
+    ShoppingCart,
+    Users,
+    WalletCards,
+} from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
+    SidebarRail,
 } from '@/components/ui/sidebar';
+import { useCustomizePreferences } from '@/hooks/use-customize-preferences';
+import { useTranslations, type TranslationKey } from '@/i18n';
 import { dashboard } from '@/routes';
+import appearance from '@/routes/appearance';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const mainNavGroups = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        label: 'overview',
+        items: [
+            { title: 'dashboard', href: dashboard(), icon: LayoutGrid },
+            {
+                title: 'analytics',
+                href: dashboard(),
+                icon: ChartNoAxesCombined,
+                disabled: true,
+            },
+            {
+                title: 'ecommerce',
+                href: dashboard(),
+                icon: ShoppingCart,
+                disabled: true,
+            },
+            { title: 'crm', href: dashboard(), icon: Users, disabled: true },
+            {
+                title: 'saas',
+                href: dashboard(),
+                icon: WalletCards,
+                disabled: true,
+            },
+        ],
     },
-];
-
-const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
+        label: 'commerce',
+        items: [
+            {
+                title: 'orders',
+                href: dashboard(),
+                icon: Package,
+                badge: '12',
+                disabled: true,
+            },
+            {
+                title: 'products',
+                href: dashboard(),
+                icon: ShoppingCart,
+                disabled: true,
+            },
+            {
+                title: 'customers',
+                href: dashboard(),
+                icon: Users,
+                disabled: true,
+            },
+            {
+                title: 'invoices',
+                href: dashboard(),
+                icon: FileText,
+                disabled: true,
+            },
+        ],
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        label: 'apps',
+        items: [
+            { title: 'mail', href: dashboard(), icon: Mail, disabled: true },
+            {
+                title: 'chat',
+                href: dashboard(),
+                icon: MessageSquare,
+                disabled: true,
+            },
+            {
+                title: 'files',
+                href: dashboard(),
+                icon: Folder,
+                disabled: true,
+            },
+            {
+                title: 'kanban',
+                href: dashboard(),
+                icon: KanbanSquare,
+                disabled: true,
+            },
+            {
+                title: 'calendar',
+                href: dashboard(),
+                icon: CalendarDays,
+                disabled: true,
+            },
+            {
+                title: 'forms',
+                href: dashboard(),
+                icon: FormInput,
+                disabled: true,
+            },
+        ],
     },
-];
+    {
+        label: 'system',
+        items: [
+            {
+                title: 'billing',
+                href: dashboard(),
+                icon: CreditCard,
+                disabled: true,
+            },
+            {
+                title: 'notifications',
+                href: dashboard(),
+                icon: Bell,
+                badge: '3',
+                disabled: true,
+            },
+            { title: 'settings', href: appearance.edit(), icon: Settings },
+            {
+                title: 'helpSupport',
+                href: dashboard(),
+                icon: HelpCircle,
+                disabled: true,
+            },
+        ],
+    },
+] satisfies { label: string; items: (NavItem & { badge?: string })[] }[];
 
 export function AppSidebar() {
-    return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
+    const { language } = useCustomizePreferences();
+    const t = useTranslations(language);
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
+    const translatedGroups = mainNavGroups.map((group) => ({
+        ...group,
+        label: t(group.label as TranslationKey),
+        items: group.items.map((item) => ({
+            ...item,
+            title: t(item.title as TranslationKey),
+        })),
+    }));
+
+    return (
+        <Sidebar collapsible="icon" variant="sidebar">
+            <SidebarContent className="px-3 py-4">
+                <NavMain groups={translatedGroups} />
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+            <SidebarFooter className="border-t border-sidebar-border px-3 py-3">
                 <NavUser />
             </SidebarFooter>
+            <SidebarRail />
         </Sidebar>
     );
 }

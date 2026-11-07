@@ -1,3 +1,5 @@
+import { useCustomizePreferences } from '@/hooks/use-customize-preferences';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -8,9 +10,8 @@ export default function AppLayout({
     breadcrumbs?: BreadcrumbItem[];
     children: React.ReactNode;
 }) {
-    return (
-        <AppLayoutTemplate breadcrumbs={breadcrumbs}>
-            {children}
-        </AppLayoutTemplate>
-    );
+    const { layout } = useCustomizePreferences();
+    const Layout = layout === 'top-nav' ? AppHeaderLayout : AppLayoutTemplate;
+
+    return <Layout breadcrumbs={breadcrumbs}>{children}</Layout>;
 }

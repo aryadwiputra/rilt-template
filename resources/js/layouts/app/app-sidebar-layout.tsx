@@ -10,11 +10,16 @@ export default function AppSidebarLayout({
 }: AppLayoutProps) {
     return (
         <AppShell variant="sidebar">
-            <AppSidebar />
-            <AppContent variant="sidebar" className="min-w-0 overflow-x-clip">
-                <AppSidebarHeader breadcrumbs={breadcrumbs} />
-                {children}
-            </AppContent>
+            <AppSidebarHeader breadcrumbs={breadcrumbs} />
+            <div className="flex min-h-0 min-w-0 flex-1">
+                <AppSidebar />
+                <AppContent
+                    variant="sidebar"
+                    className="min-w-0 overflow-x-clip"
+                >
+                    {children}
+                </AppContent>
+            </div>
         </AppShell>
     );
 }
